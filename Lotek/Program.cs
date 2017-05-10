@@ -301,6 +301,7 @@ namespace Lotek
 
         public static void DownloadLicenseFile()
         {
+            File.Delete("activaction.xml");
             Console.WriteLine("Proszę czekać...");
             using (var client = new WebClient())
             {
