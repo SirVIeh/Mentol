@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -11,105 +12,132 @@ namespace Lotek
     class Program
     {
         static LuckyNumbers luckyNumbers = new LuckyNumbers();
+        private static Activation activation = new Activation();
         static void Main(string[] args)
         {
-            luckyNumbers.Numbers = new List<List<int>>();
-            ReadFromFile();
-            int readedLocalNumber = 0;
-            ConsoleKeyInfo choice = new ConsoleKeyInfo();
-            bool exists = false;
-            try
+            if (!File.Exists("activaction.xml"))
             {
-
+                DownloadLicenseFile();
+                ReadFromActivationFile();
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
-            }
-            while (choice.Key != ConsoleKey.D3)
-            {
-                Console.WriteLine("*******************LOTTO*********************");
-                Console.WriteLine("1 - Podaj nowy zestaw liczb");
-                Console.WriteLine("2 - Zobacz raport z dotychczasowych losowań");
-                Console.WriteLine("3 - Zakończ");
-
-                choice = Console.ReadKey();
-                Console.WriteLine("");
-                List<int> numbersToSave = new List<int>();
-                switch (choice.Key)
+                if (activation.Activated == "egal")
                 {
-                    case ConsoleKey.D1:
-                        for (int i = 0; i < 6; i++)
-                        {
-                            int num = i + 1;
-                            Console.WriteLine("Podaj liczbę [" + num + "] :");
-                            try
+                    ReadFromActivationFile();
+                }
+                else
+                {
+                    DownloadLicenseFile();
+                    ReadFromActivationFile();
+                }
+            }
+            if (activation.Activated == "davon" || activation.Activated == "egal")
+            {
+                luckyNumbers.Numbers = new List<List<int>>();
+                ReadFromFile();
+                int readedLocalNumber = 0;
+                ConsoleKeyInfo choice = new ConsoleKeyInfo();
+                bool exists = false;
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                while (choice.Key != ConsoleKey.D3)
+                {
+                    Console.WriteLine("*******************LOTTO*********************");
+                    Console.WriteLine("1 - Podaj nowy zestaw liczb");
+                    Console.WriteLine("2 - Zobacz raport z dotychczasowych losowań");
+                    Console.WriteLine("3 - Zakończ");
+
+                    choice = Console.ReadKey();
+                    Console.WriteLine("");
+                    List<int> numbersToSave = new List<int>();
+                    switch (choice.Key)
+                    {
+                        case ConsoleKey.D1:
+                            for (int i = 0; i < 6; i++)
                             {
-                                readedLocalNumber = Convert.ToInt32(Console.ReadLine());
-                            }
-                            catch (FormatException)
-                            {
-                                Console.WriteLine("To nie jest liczba. Spróbuj ponownie.");
-                                readedLocalNumber = -1;
-                            }
-                            if (readedLocalNumber < 1 || readedLocalNumber > 49)
-                            {
-                                if (readedLocalNumber != -1)
-                                    Console.WriteLine("Tej liczby nie ma w Lotku. Wpisz jeszcze raz.");
-                                i--;
-                            }
-                            else
-                            {
-                                foreach (int nToSave in numbersToSave)
+                                int num = i + 1;
+                                Console.WriteLine("Podaj liczbę [" + num + "] :");
+                                try
                                 {
-                                    if (nToSave == readedLocalNumber)
-                                    {
-                                        exists = true;
-                                    }
+                                    readedLocalNumber = Convert.ToInt32(Console.ReadLine());
                                 }
-                                if (exists)
+                                catch (FormatException)
                                 {
-                                    Console.WriteLine("Nie można podać dwóch takich samych liczb w jednym losowaniu");
+                                    Console.WriteLine("To nie jest liczba. Spróbuj ponownie.");
+                                    readedLocalNumber = -1;
+                                }
+                                if (readedLocalNumber < 1 || readedLocalNumber > 49)
+                                {
+                                    if (readedLocalNumber != -1)
+                                        Console.WriteLine("Tej liczby nie ma w Lotku. Wpisz jeszcze raz.");
                                     i--;
-                                    exists = false;
                                 }
                                 else
                                 {
-                                    numbersToSave.Add(readedLocalNumber);
+                                    foreach (int nToSave in numbersToSave)
+                                    {
+                                        if (nToSave == readedLocalNumber)
+                                        {
+                                            exists = true;
+                                        }
+                                    }
+                                    if (exists)
+                                    {
+                                        Console.WriteLine("Nie można podać dwóch takich samych liczb w jednym losowaniu");
+                                        i--;
+                                        exists = false;
+                                    }
+                                    else
+                                    {
+                                        numbersToSave.Add(readedLocalNumber);
+                                    }
                                 }
                             }
-                        }
-                        if (!CheckIfExists(numbersToSave))
-                        {
-                            Console.WriteLine("Zapisuję podane liczby...");
-                            luckyNumbers.Numbers.Add(numbersToSave);
-                            Console.WriteLine("Ilość losowań: " + luckyNumbers.Numbers.Count);
-                            foreach (List<int> currentNumbers in luckyNumbers.Numbers)
+                            if (!CheckIfExists(numbersToSave))
                             {
-                                foreach (int i in currentNumbers)
+                                Console.WriteLine("Zapisuję podane liczby...");
+                                luckyNumbers.Numbers.Add(numbersToSave);
+                                Console.WriteLine("Ilość losowań: " + luckyNumbers.Numbers.Count);
+                                foreach (List<int> currentNumbers in luckyNumbers.Numbers)
                                 {
-                                    Console.Write(i + "/");
+                                    foreach (int i in currentNumbers)
+                                    {
+                                        Console.Write(i + "/");
+                                    }
+                                    Console.WriteLine("");
                                 }
-                                Console.WriteLine("");
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Podane losowanie już istnieje.");
-                        }
-                        break;
-                    case ConsoleKey.D2:
-                        DisplayReport();
-                        break;
-                    case ConsoleKey.D3:
-                        SaveToFile(luckyNumbers);
-                        break;
+                            else
+                            {
+                                Console.WriteLine("Podane losowanie już istnieje.");
+                            }
+                            break;
+                        case ConsoleKey.D2:
+                            DisplayReport();
+                            break;
+                        case ConsoleKey.D3:
+                            SaveToFile(luckyNumbers);
+                            break;
+                    }
                 }
+
+
+                Console.WriteLine("Wciśnij dowolny klawisz, aby zakończyć.");
+                Console.ReadKey();
             }
-
-
-            Console.WriteLine("Wciśnij dowolny klawisz, aby zakończyć.");
-            Console.ReadKey();
+            else
+            {
+                Console.WriteLine(activation.Activated);
+                Console.WriteLine("Wciśnij dowolny klawisz, aby zakończyć.");
+                Console.ReadKey();
+            }
         }
 
         private static void DisplayReport()
@@ -232,6 +260,14 @@ namespace Lotek
                 xml.Serialize(fStream, lNumbers);
             }
         }
+        public static void SaveToFileAct()
+        {
+            XmlSerializer xml = new XmlSerializer(typeof(Activation));
+            using (Stream fStream = new FileStream("ACT.xml", FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                xml.Serialize(fStream, activation);
+            }
+        }
         public static void ReadFromFile()
         {
             XmlSerializer xml = new XmlSerializer(typeof(LuckyNumbers));
@@ -246,6 +282,31 @@ namespace Lotek
             {
                 Console.WriteLine("Brak pliku z losowaniami. Tworzę nowy.");
             }
+        }
+        public static void ReadFromActivationFile()
+        {
+            XmlSerializer xml = new XmlSerializer(typeof(Activation));
+            try
+            {
+                using (Stream fStream = new FileStream("activaction.xml", FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    activation = (Activation)xml.Deserialize(fStream);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Brak pliku z losowaniami. Tworzę nowy.");
+            }
+        }
+
+        public static void DownloadLicenseFile()
+        {
+            Console.WriteLine("Proszę czekać...");
+            using (var client = new WebClient())
+            {
+                client.DownloadFile("https://docs.google.com/uc?export=download&id=0B-axT0J2c_GhR0pRWDhhLWdFcjQ", "activaction.xml");
+            }
+            Console.WriteLine("Gotowe");
         }
     }
 }

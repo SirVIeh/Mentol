@@ -1,6 +1,5 @@
 d:\mieszko\documents\visual studio 2013\Projects\Lotek\Lotek\bin\Debug\Lotek.exe.config
 d:\mieszko\documents\visual studio 2013\Projects\Lotek\Lotek\bin\Debug\Lotek.exe
 d:\mieszko\documents\visual studio 2013\Projects\Lotek\Lotek\bin\Debug\Lotek.pdb
-d:\mieszko\documents\visual studio 2013\Projects\Lotek\Lotek\obj\Debug\Lotek.csprojResolveAssemblyReference.cache
 d:\mieszko\documents\visual studio 2013\Projects\Lotek\Lotek\obj\Debug\Lotek.exe
 d:\mieszko\documents\visual studio 2013\Projects\Lotek\Lotek\obj\Debug\Lotek.pdb
