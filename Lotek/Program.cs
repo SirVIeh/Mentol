@@ -49,6 +49,7 @@ namespace Lotek
                 while (choice.Key != ConsoleKey.D3)
                 {
                     Console.WriteLine("*******************LOTTO*********************");
+                    Console.WriteLine("[WYBIERZ OPCJĘ]");
                     Console.WriteLine("1 - Podaj nowy zestaw liczb");
                     Console.WriteLine("2 - Zobacz raport z dotychczasowych losowań");
                     Console.WriteLine("3 - Zakończ");
@@ -59,7 +60,8 @@ namespace Lotek
                     switch (choice.Key)
                     {
                         case ConsoleKey.D1:
-                            Console.WriteLine("Podaj 6 liczb oddzielonych spacjami, aby dodać losowanie:");
+                            Console.Clear();
+                            Console.WriteLine("Podaj 6 liczb oddzielonych spacjami, aby dodać losowanie, a następnie kliknij \"Enter\" aby zatwierdzić:");
                             enteredNumbersString = Regex.Split(Console.ReadLine(), " ");
                             if (enteredNumbersString.Count() < 6 || enteredNumbersString.Count() > 6)
                             {
@@ -88,65 +90,72 @@ namespace Lotek
                                     }
                                     if (numberBeforeAdd < 1 || numberBeforeAdd > 49)
                                     {
-                                        if (numberBeforeAdd != -1)
-                                        {
                                             Console.Clear();
                                             Console.ForegroundColor = ConsoleColor.Red;
                                             Console.WriteLine("Tej liczby nie ma w Lotku. Podaj losowanie jeszcze raz.");
                                             Console.ResetColor();
+                                            numberBeforeAdd = -1;
+                                            break;
+                                    }
+                                        numbersToSave.Add(numberBeforeAdd);
+                                }
+                                if (numberBeforeAdd != -1)
+                                {
+                                    if (numbersToSave.GroupBy(n => n).Any(c => c.Count() > 1))
+                                    {
+                                        exists = true;
+                                    }
+                                    if (exists)
+                                    {
+                                        Console.Clear();
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine(
+                                            "Nie można podać dwóch takich samych liczb w jednym losowaniu");
+                                        Console.ResetColor();
+                                        exists = false;
+                                        break;
+                                    }
+                                    if (!CheckIfExists(numbersToSave))
+                                    {
+                                        Console.Clear();
+                                        Console.ForegroundColor = ConsoleColor.Green;
+                                        Console.WriteLine("Zapisano losowanie");
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                        luckyNumbers.Numbers.Add(numbersToSave);
+                                        Console.WriteLine("Ilość losowań: " + luckyNumbers.Numbers.Count);
+                                        foreach (var currentNumbers in luckyNumbers.Numbers)
+                                        {
+                                            foreach (int i in currentNumbers)
+                                            {
+                                                Console.Write(i + "/");
+                                            }
+                                            Console.WriteLine("");
                                         }
+                                        Console.ResetColor();
                                     }
                                     else
                                     {
-                                        numbersToSave.Add(numberBeforeAdd);
+                                        Console.Clear();
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Podane losowanie już istnieje.");
+                                        Console.ResetColor();
                                     }
+                                    SaveToFile(luckyNumbers);
                                 }
-                                if (numbersToSave.GroupBy(n => n).Any(c => c.Count() > 1))
-                                {
-                                    exists = true;
-                                }
-                                if (exists)
-                                {
-                                    Console.Clear();
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine(
-                                        "Nie można podać dwóch takich samych liczb w jednym losowaniu");
-                                    Console.ResetColor();
-                                    exists = false;
-                                    break;
-                                }
-                                if (!CheckIfExists(numbersToSave))
-                                {
-                                    Console.Clear();
-                                    Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine("Zapisano losowanie");
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    luckyNumbers.Numbers.Add(numbersToSave);
-                                    Console.WriteLine("Ilość losowań: " + luckyNumbers.Numbers.Count);
-                                    foreach (var currentNumbers in luckyNumbers.Numbers)
-                                    {
-                                        foreach (int i in currentNumbers)
-                                        {
-                                            Console.Write(i + "/");
-                                        }
-                                        Console.WriteLine("");
-                                    }
-                                    Console.ResetColor();
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Podane losowanie już istnieje.");
-                                    Console.ResetColor();
-                                }
-                                SaveToFile(luckyNumbers);
                             }
                             break;
                         case ConsoleKey.D2:
+                            Console.Clear();
                             DisplayReport();
                             break;
                         case ConsoleKey.D3:
+                            Console.Clear();
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Nieprawidłowy numer. Proszę wybrać jedną z dostępnych opcji.");
+                            Console.ResetColor();
                             break;
                     }
                 }
