@@ -46,7 +46,7 @@ namespace Lotek
                 {
                     Console.WriteLine(e.Message);
                 }
-                while (choice.Key != ConsoleKey.D3)
+                while (choice.Key != ConsoleKey.D3 && choice.Key != ConsoleKey.NumPad3)
                 {
                     Console.WriteLine("*******************LOTTO*********************");
                     Console.WriteLine("[WYBIERZ OPCJĘ]");
@@ -59,6 +59,8 @@ namespace Lotek
                     var numbersToSave = new List<int>();
                     switch (choice.Key)
                     {
+                        case ConsoleKey.NumPad1:
+                            goto case ConsoleKey.D1;
                         case ConsoleKey.D1:
                             Console.Clear();
                             Console.WriteLine("Podaj 6 liczb oddzielonych spacjami, aby dodać losowanie, a następnie kliknij \"Enter\" aby zatwierdzić:");
@@ -144,10 +146,14 @@ namespace Lotek
                                 }
                             }
                             break;
+                        case ConsoleKey.NumPad2:
+                            goto case ConsoleKey.D2;
                         case ConsoleKey.D2:
                             Console.Clear();
                             DisplayReport();
                             break;
+                        case ConsoleKey.NumPad3:
+                            goto case ConsoleKey.D3;
                         case ConsoleKey.D3:
                             Console.Clear();
                             break;
