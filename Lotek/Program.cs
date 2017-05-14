@@ -124,15 +124,28 @@ namespace Lotek
                                         Console.WriteLine("Zapisano losowanie");
                                         Console.ForegroundColor = ConsoleColor.Yellow;
                                         luckyNumbers.Numbers.Add(numbersToSave);
-                                        Console.WriteLine("Ilość losowań: " + luckyNumbers.Numbers.Count);
-                                        foreach (var currentNumbers in luckyNumbers.Numbers)
+                                        for (int i = luckyNumbers.Numbers.Count - 6;
+                                            i < luckyNumbers.Numbers.Count;
+                                            i++)
                                         {
-                                            foreach (int i in currentNumbers)
+                                            foreach (int j in luckyNumbers.Numbers[i])
                                             {
-                                                Console.Write(i + "/");
+                                                Console.Write(".." + j);
                                             }
+                                            Console.Write("..");
                                             Console.WriteLine("");
                                         }
+                                        Console.ForegroundColor = ConsoleColor.Green;
+                                        Console.WriteLine("Ilość losowań: " + luckyNumbers.Numbers.Count);
+                                        //foreach (var currentNumbers in luckyNumbers.Numbers)
+                                        //{
+                                        //    foreach (int i in currentNumbers)
+                                        //    {
+                                        //        Console.Write(".." + i);
+                                        //    }
+                                        //    Console.Write("..");
+                                        //    Console.WriteLine("");
+                                        //}
                                         Console.ResetColor();
                                     }
                                     else
@@ -165,10 +178,6 @@ namespace Lotek
                             break;
                     }
                 }
-
-
-                Console.WriteLine("Wciśnij dowolny klawisz, aby zakończyć.");
-                Console.ReadKey();
             }
             else
             {
